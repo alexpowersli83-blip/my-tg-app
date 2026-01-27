@@ -1,40 +1,166 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background-color: var(--tg-theme-bg-color); color: var(--tg-theme-text-color); padding: 20px; }
-        input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; }
-        button { background-color: var(--tg-theme-button-color); color: var(--tg-theme-button-text-color); border: none; font-weight: bold; }
+        :root {
+            --tg-bg: var(--tg-theme-bg-color, #ffffff);
+            --tg-text: var(--tg-theme-text-color, #000000);
+            --tg-hint: var(--tg-theme-hint-color, #999999);
+            --tg-link: var(--tg-theme-link-color, #248bcf);
+            --tg-primary: var(--tg-theme-button-color, #248bcf);
+            --tg-primary-text: var(--tg-theme-button-text-color, #ffffff);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-bg);
+            color: var(--tg-text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Навигация (Вкладки) */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--tg-hint);
+            background: var(--tg-bg);
+            position: sticky;
+            top: 0;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            color: var(--tg-text);
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            opacity: 0.6;
+            transition: 0.3s;
+        }
+
+        .tab-button.active {
+            opacity: 1;
+            border-bottom: 3px solid var(--tg-primary);
+            color: var(--tg-primary);
+        }
+
+        /* Контент вкладок */
+        .tab-content {
+            display: none;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        input, textarea, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid var(--tg-hint);
+            border-radius: 8px;
+            box-sizing: border-box;
+            background: var(--tg-bg);
+            color: var(--tg-text);
+        }
+
+        button {
+            background-color: var(--tg-primary);
+            color: var(--tg-primary-text);
+            border: none;
+            font-weight: bold;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <h3>Оставить заявку</h3>
-    <input type="text" id="name" placeholder="Ваше имя">
-    <input type="tel" id="phone" placeholder="Номер телефона">
-    <textarea id="message" placeholder="Ваш вопрос" style="width: 100%; border-radius: 8px;"></textarea>
-    <button id="send">Отправить</button>
+
+    <div class="tabs">
+        <button class="tab-button active" onclick="openTab(event, 'tab1')">Головна</button>
+        <button class="tab-button" onclick="openTab(event, 'tab2')">Анкета</button>
+        <button class="tab-button" onclick="openTab(event, 'tab3')">Інфо</button>
+    </div>
+
+    <div id="tab1" class="tab-content active">
+        <h2>Вітаємо!</h2>
+        <p>Це головна сторінка вашого Telegram Mini App.</p>
+        <p style="color: var(--tg-hint);">Використовуйте вкладки вище для навігації.</p>
+    </div>
+
+    <div id="tab2" class="tab-content">
+        <h2>Заповніть форму</h2>
+        <input type="text" id="userName" placeholder="Ваше ім'я">
+        <input type="tel" id="userPhone" placeholder="Ваш телефон">
+        <textarea id="userMsg" placeholder="Ваше повідомлення" rows="4"></textarea>
+        <button onclick="sendData()">Надіслати дані</button>
+    </div>
+
+    <div id="tab3" class="tab-content">
+        <h2>Про нас</h2>
+        <p>Тут ви можете розмістити опис вашої компанії, посилання на соцмережі або графік роботи.</p>
+        <a href="#" style="color: var(--tg-link);">Наш сайт</a>
+    </div>
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Расширяет приложение на весь экран
+        tg.expand();
 
-        document.getElementById('send').onclick = function() {
-            let data = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                message: document.getElementById('message').value
+        // Функция переключения вкладок
+        function openTab(evt, tabName) {
+            let i, tabContent, tabButtons;
+
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].classList.remove("active");
+            }
+
+            tabButtons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("active");
+            }
+
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Функция отправки данных (замените URL на ваш Google Web App)
+        function sendData() {
+            const webAppUrl = "https://script.google.com/macros/s/AKfycbwZhn9yqHh9e1jYFjpevNqAkko2mDYe70zxrl0cFkbiVGFTN8zv7aU2scu7n8mMaJSo/exec"; 
+            
+            const data = {
+                name: document.getElementById('userName').value,
+                phone: document.getElementById('userPhone').value,
+                message: document.getElementById('userMsg').value
             };
 
-            // Отправляем данные в Google Script
-            fetch('ВАШ ID GOOGLE', {
+            if(!data.name || !data.phone) {
+                tg.showAlert("Будь ласка, заповніть основні поля!");
+                return;
+            }
+
+            fetch(webAppUrl, {
                 method: 'POST',
+                mode: 'no-cors', // Важливо для Google Scripts
                 body: JSON.stringify(data)
-            })
-            .then(() => {
-                tg.close(); // Закрываем приложение после отправки
+            }).then(() => {
+                tg.showAlert("Дані успішно надіслані!");
+                tg.close();
+            }).catch(err => {
+                tg.showAlert("Помилка при відправці: " + err);
             });
-        };
+        }
     </script>
 </body>
 </html>
