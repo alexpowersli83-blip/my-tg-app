@@ -12,6 +12,7 @@
             --tg-link: var(--tg-theme-link-color, #248bcf);
             --tg-primary: var(--tg-theme-button-color, #248bcf);
             --tg-primary-text: var(--tg-theme-button-text-color, #ffffff);
+            --tg-sec-bg: var(--tg-theme-secondary-bg-color, #f0f0f0);
         }
 
         body {
@@ -22,16 +23,17 @@
             padding: 0;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            min-height: 100vh;
         }
 
-        /* Навигация (Вкладки) */
+        /* Навігація */
         .tabs {
             display: flex;
             border-bottom: 1px solid var(--tg-hint);
             background: var(--tg-bg);
             position: sticky;
             top: 0;
+            z-index: 100;
         }
 
         .tab-button {
@@ -43,7 +45,6 @@
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            outline: none;
             opacity: 0.6;
             transition: 0.3s;
         }
@@ -54,15 +55,24 @@
             color: var(--tg-primary);
         }
 
-        /* Контент вкладок */
+        /* Контент */
         .tab-content {
             display: none;
             padding: 20px;
-            overflow-y: auto;
         }
 
         .tab-content.active {
             display: block;
+        }
+
+        /* Стилі для заголовка та картинки */
+        .header-section { text-align: center; margin-bottom: 20px; }
+        .site-title { font-size: 24px; margin: 10px 0; }
+        .header-image { 
+            width: 100%; 
+            max-width: 400px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         input, textarea, button {
@@ -70,10 +80,11 @@
             padding: 12px;
             margin-top: 10px;
             border: 1px solid var(--tg-hint);
-            border-radius: 8px;
+            border-radius: 10px;
             box-sizing: border-box;
             background: var(--tg-bg);
             color: var(--tg-text);
+            font-size: 16px;
         }
 
         button {
@@ -82,6 +93,16 @@
             border: none;
             font-weight: bold;
             margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .user-info {
+            background: var(--tg-sec-bg);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: var(--tg-hint);
         }
     </style>
 </head>
@@ -94,12 +115,16 @@
     </div>
 
     <div id="tab1" class="tab-content active">
+        <div class="header-section">
+            <h1 class="site-title">Мій Telegram Сервіс</h1>
+            <img src="https://via.placeholder.com/600x300.png?text=Welcome+Image" alt="Banner" class="header-image">
+        </div>
         <h2>Вітаємо!</h2>
-        <p>Це головна сторінка вашого Telegram Mini App.</p>
-        <p style="color: var(--tg-hint);">Використовуйте вкладки вище для навігації.</p>
+        <p>Це головна сторінка вашого додатку. Тут можна розмістити важливі новини або вітальне слово.</p>
     </div>
 
     <div id="tab2" class="tab-content">
+        <div id="userInfoDisplay" class="user-info"></div>
         <h2>Заповніть форму</h2>
         <input type="text" id="userName" placeholder="Ваше ім'я">
         <input type="tel" id="userPhone" placeholder="Ваш телефон">
@@ -109,56 +134,71 @@
 
     <div id="tab3" class="tab-content">
         <h2>Про нас</h2>
-        <p>Тут ви можете розмістити опис вашої компанії, посилання на соцмережі або графік роботи.</p>
-        <a href="#" style="color: var(--tg-link);">Наш сайт</a>
+        <p>Ми збираємо дані для покращення нашого сервісу.</p>
+        <a href="#" style="color: var(--tg-link);">Наш веб-сайт</a>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Функция переключения вкладок
-        function openTab(evt, tabName) {
-            let i, tabContent, tabButtons;
+        // Отримуємо дані користувача автоматично
+        const user = tg.initDataUnsafe?.user;
+        const infoBox = document.getElementById('userInfoDisplay');
+        
+        if (user) {
+            infoBox.innerHTML = `Ви зайшли як: <b>${user.first_name}</b> (ID: ${user.id})`;
+        } else {
+            infoBox.innerHTML = "Дані користувача недоступні (відкрито не через Telegram)";
+        }
 
-            tabContent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabContent.length; i++) {
+        function openTab(evt, tabName) {
+            let tabContent = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContent.length; i++) {
                 tabContent[i].classList.remove("active");
             }
-
-            tabButtons = document.getElementsByClassName("tab-button");
-            for (i = 0; i < tabButtons.length; i++) {
+            let tabButtons = document.getElementsByClassName("tab-button");
+            for (let i = 0; i < tabButtons.length; i++) {
                 tabButtons[i].classList.remove("active");
             }
-
             document.getElementById(tabName).classList.add("active");
             evt.currentTarget.classList.add("active");
         }
 
-        // Функция отправки данных (замените URL на ваш Google Web App)
         function sendData() {
+            // URL вашого Google Script (залишається вашим)
             const webAppUrl = "https://script.google.com/macros/s/AKfycbwZhn9yqHh9e1jYFjpevNqAkko2mDYe70zxrl0cFkbiVGFTN8zv7aU2scu7n8mMaJSo/exec"; 
             
             const data = {
+                // Дані з полів
                 name: document.getElementById('userName').value,
                 phone: document.getElementById('userPhone').value,
-                message: document.getElementById('userMsg').value
+                message: document.getElementById('userMsg').value,
+                // Автоматичні дані
+                tg_id: user ? user.id : "невідомо",
+                tg_user: user ? user.username : "немає",
+                tg_name: user ? user.first_name : "невідомо"
             };
 
             if(!data.name || !data.phone) {
-                tg.showAlert("Будь ласка, заповніть основні поля!");
+                tg.showAlert("Будь ласка, заповніть Ім'я та Телефон!");
                 return;
             }
 
+            // Повідомляємо про початок відправки
+            tg.MainButton.setText("Відправка...").show();
+
             fetch(webAppUrl, {
                 method: 'POST',
-                mode: 'no-cors', // Важливо для Google Scripts
+                mode: 'no-cors',
                 body: JSON.stringify(data)
             }).then(() => {
-                tg.showAlert("Дані успішно надіслані!");
+                tg.MainButton.hide();
+                tg.showAlert("Дані успішно надіслані, " + data.tg_name + "!");
                 tg.close();
             }).catch(err => {
-                tg.showAlert("Помилка при відправці: " + err);
+                tg.MainButton.hide();
+                tg.showAlert("Помилка: " + err);
             });
         }
     </script>
