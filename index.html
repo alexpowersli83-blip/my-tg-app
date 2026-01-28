@@ -109,14 +109,14 @@
 <body>
 
     <div class="tabs">
-        <button class="tab-button active" onclick="openTab(event, 'tab1')">Головна</button>
-        <button class="tab-button" onclick="openTab(event, 'tab2')">Анкета</button>
-        <button class="tab-button" onclick="openTab(event, 'tab3')">Інфо</button>
+        <button class="tab-button active" onclick="openTab(event, 'tab1')">Нова зміна</button>
+        <button class="tab-button" onclick="openTab(event, 'tab2')">Зоборонені предмети</button>
+        <button class="tab-button" onclick="openTab(event, 'tab3')">Форма №2</button>
     </div>
 
     <div id="tab1" class="tab-content active">
         <div class="header-section">
-            <h1 class="site-title">Мій Telegram Сервіс</h1>
+            <h1 class="site-title">Вказуємо заступаючий наряд</h1>
             <img src="https://via.placeholder.com/600x300.png?text=Welcome+Image" alt="Banner" class="header-image">
         </div>
         <h2>Вітаємо!</h2>
@@ -125,7 +125,7 @@
 
     <div id="tab2" class="tab-content">
         <div id="userInfoDisplay" class="user-info"></div>
-        <h2>Заповніть форму</h2>
+        <h2>Виявлено заборонені предмети, а саме:</h2>
         <input type="text" id="userName" placeholder="Ваше ім'я">
         <input type="tel" id="userPhone" placeholder="Ваш телефон">
         <textarea id="userMsg" placeholder="Ваше повідомлення" rows="4"></textarea>
@@ -133,7 +133,7 @@
     </div>
 
     <div id="tab3" class="tab-content">
-        <h2>Про нас</h2>
+        <h2>Форма №2 (по закінченю роботи суду)</h2>
         <p>Ми збираємо дані для покращення нашого сервісу.</p>
         <a href="#" style="color: var(--tg-link);">Наш веб-сайт</a>
     </div>
